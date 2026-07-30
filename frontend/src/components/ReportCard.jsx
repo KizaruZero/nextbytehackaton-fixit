@@ -19,6 +19,15 @@ function formatDate(dt) {
   });
 }
 
+/** Returns the most important badge for a report, or null. */
+function getBadge(report) {
+  const ageHours = (Date.now() - new Date(report.created_at)) / 3_600_000;
+  if (report.upvote_count >= 5) return { label: '🔥 Trending', bg: 'bg-danger', text: 'text-white' };
+  if (ageHours <= 24)           return { label: '⚡ Just Reported', bg: 'bg-primary', text: 'text-white' };
+  if (report.status === 'resolved') return { label: '✅ Resolved', bg: 'bg-success', text: 'text-ink' };
+  return null;
+}
+
 export default function ReportCard({ report, votedIds, onVote }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -42,6 +51,7 @@ export default function ReportCard({ report, votedIds, onVote }) {
 
   const imgSrc = report.image_path ? `${UPLOADS_URL}${report.image_path}` : null;
   const hasCoords = report.latitude && report.longitude;
+  const badge = getBadge(report);
 
   return (
     // h-full ensures the card fills the grid cell height → equal card heights in every row
@@ -51,12 +61,23 @@ export default function ReportCard({ report, votedIds, onVote }) {
       onClick={() => navigate(`/reports/${report.id}`)}
     >
       {/* Fixed-height image area — same for every card */}
-      <div className="border-b-3 border-ink h-44 overflow-hidden flex-shrink-0">
+      <div className="border-b-3 border-ink h-44 overflow-hidden flex-shrink-0 relative">
         {imgSrc ? (
           <img src={imgSrc} alt={report.title} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-accent/20">
             <span className="text-4xl opacity-40">📷</span>
+          </div>
+        )}
+        {/* Ribbon badge */}
+        {badge && (
+          <div
+            className={`absolute top-3 left-0 ${badge.bg} ${badge.text}
+              border-3 border-ink px-3 py-1 text-xs font-mono font-black
+              shadow-brutal-sm`}
+            style={{ clipPath: 'polygon(0 0, calc(100% - 0px) 0, 100% 100%, 0 100%)' }}
+          >
+            {badge.label}
           </div>
         )}
       </div>
