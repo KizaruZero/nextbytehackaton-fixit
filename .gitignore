@@ -1,0 +1,14 @@
+# Backend
+backend/database.db
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+
+# General
+.DS_Store
+*.log
+Thumbs.db
