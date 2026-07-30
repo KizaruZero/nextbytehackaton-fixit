@@ -5,16 +5,16 @@ import UpvoteButton from './UpvoteButton';
 import { api, UPLOADS_URL } from '../api/client';
 
 const CATEGORY_LABELS = {
-  jalan_rusak: '🛣️ Jalan Rusak',
-  sampah: '🗑️ Sampah',
-  lampu_mati: '💡 Lampu Mati',
-  fasilitas_umum: '🏗️ Fasilitas Umum',
-  keamanan: '🚨 Keamanan',
-  lainnya: '📌 Lainnya',
+  jalan_rusak: '🛣️ Damaged Road',
+  sampah: '🗑️ Waste / Trash',
+  lampu_mati: '💡 Broken Light',
+  fasilitas_umum: '🏗️ Public Facility',
+  keamanan: '🚨 Security',
+  lainnya: '📌 Other',
 };
 
 function formatDate(dt) {
-  return new Date(dt).toLocaleDateString('id-ID', {
+  return new Date(dt).toLocaleDateString('en-US', {
     day: '2-digit', month: 'short', year: 'numeric',
   });
 }

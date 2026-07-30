@@ -1,15 +1,15 @@
 const CATEGORY_LABELS = {
-  '': 'Semua Kategori',
-  jalan_rusak: '🛣️ Jalan Rusak',
-  sampah: '🗑️ Sampah',
-  lampu_mati: '💡 Lampu Mati',
-  fasilitas_umum: '🏗️ Fasilitas Umum',
-  keamanan: '🚨 Keamanan',
-  lainnya: '📌 Lainnya',
+  '': 'All Categories',
+  jalan_rusak: '🛣️ Damaged Road',
+  sampah: '🗑️ Waste / Trash',
+  lampu_mati: '💡 Broken Light',
+  fasilitas_umum: '🏗️ Public Facility',
+  keamanan: '🚨 Security',
+  lainnya: '📌 Other',
 };
 
 const STATUS_LABELS = {
-  '': 'Semua Status',
+  '': 'All Statuses',
   pending: 'Pending',
   in_progress: 'In Progress',
   resolved: 'Resolved',
@@ -19,7 +19,7 @@ export default function CategoryFilter({ category, status, onCategoryChange, onS
   return (
     <div className="flex flex-wrap gap-3 items-center">
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-mono font-bold text-ink uppercase tracking-widest">Kategori</label>
+        <label className="text-xs font-mono font-bold text-ink uppercase tracking-widest">Category</label>
         <div className="flex flex-wrap gap-2">
           {Object.entries(CATEGORY_LABELS).map(([val, label]) => (
             <button

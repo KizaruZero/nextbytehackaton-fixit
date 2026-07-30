@@ -3,12 +3,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { api } from '../api/client';
 
 const CATEGORIES = [
-  { value: 'jalan_rusak', label: '🛣️ Jalan Rusak' },
-  { value: 'sampah', label: '🗑️ Sampah' },
-  { value: 'lampu_mati', label: '💡 Lampu Mati' },
-  { value: 'fasilitas_umum', label: '🏗️ Fasilitas Umum' },
-  { value: 'keamanan', label: '🚨 Keamanan' },
-  { value: 'lainnya', label: '📌 Lainnya' },
+  { value: 'jalan_rusak', label: '🛣️ Damaged Road' },
+  { value: 'sampah', label: '🗑️ Waste / Trash' },
+  { value: 'lampu_mati', label: '💡 Broken Light' },
+  { value: 'fasilitas_umum', label: '🏗️ Public Facility' },
+  { value: 'keamanan', label: '🚨 Security' },
+  { value: 'lainnya', label: '📌 Other' },
 ];
 
 export default function SubmitPage() {
@@ -32,7 +32,7 @@ export default function SubmitPage() {
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
-      setFieldErrors(prev => ({ ...prev, image: 'Ukuran gambar maksimal 5MB' }));
+      setFieldErrors(prev => ({ ...prev, image: 'Image must be smaller than 5MB' }));
       return;
     }
     setImageFile(file);
@@ -42,11 +42,11 @@ export default function SubmitPage() {
 
   const validate = () => {
     const errs = {};
-    if (!form.title.trim()) errs.title = 'Judul wajib diisi';
-    if (form.title.length > 100) errs.title = 'Judul maksimal 100 karakter';
-    if (!form.description.trim()) errs.description = 'Deskripsi wajib diisi';
-    if (!form.category) errs.category = 'Kategori wajib dipilih';
-    if (!form.location_text.trim()) errs.location_text = 'Lokasi wajib diisi';
+    if (!form.title.trim()) errs.title = 'Title is required';
+    if (form.title.length > 100) errs.title = 'Title must not exceed 100 characters';
+    if (!form.description.trim()) errs.description = 'Description is required';
+    if (!form.category) errs.category = 'Category is required';
+    if (!form.location_text.trim()) errs.location_text = 'Location is required';
     return errs;
   };
 
@@ -84,7 +84,7 @@ export default function SubmitPage() {
       <header className="border-b-3 border-ink bg-bg sticky top-0 z-50">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-4">
           <Link to="/" id="back-home" className="btn-outline text-sm px-3 py-2">
-            ← Kembali
+            ← Back
           </Link>
           <div className="flex items-center gap-2">
             <div className="bg-primary border-3 border-ink shadow-brutal px-3 py-1">
@@ -98,15 +98,15 @@ export default function SubmitPage() {
       <main className="max-w-3xl mx-auto px-4 py-8">
         {/* Title */}
         <div className="mb-8">
-          <h1 className="text-4xl font-black text-ink">LAPOR MASALAH</h1>
-          <p className="text-ink/60 mt-1">Isi detail laporan dengan jelas agar mudah ditindaklanjuti.</p>
+          <h1 className="text-4xl font-black text-ink">REPORT AN ISSUE</h1>
+          <p className="text-ink/60 mt-1">Fill in the details clearly so it can be acted upon quickly.</p>
         </div>
 
         <form id="submit-form" onSubmit={handleSubmit} className="flex flex-col gap-6">
           {/* Title */}
           <div>
             <label className="block font-mono font-bold text-xs uppercase tracking-widest mb-2">
-              Judul <span className="text-danger">*</span>
+              Title <span className="text-danger">*</span>
             </label>
             <input
               id="field-title"
@@ -114,7 +114,7 @@ export default function SubmitPage() {
               type="text"
               value={form.title}
               onChange={handleChange}
-              placeholder="Contoh: Jalan berlubang di depan SD Negeri 01"
+              placeholder="e.g. Large pothole at the main intersection"
               maxLength={100}
               className="input-brutal"
             />
@@ -127,7 +127,7 @@ export default function SubmitPage() {
           {/* Category */}
           <div>
             <label className="block font-mono font-bold text-xs uppercase tracking-widest mb-2">
-              Kategori <span className="text-danger">*</span>
+              Category <span className="text-danger">*</span>
             </label>
             <select
               id="field-category"
@@ -136,7 +136,7 @@ export default function SubmitPage() {
               onChange={handleChange}
               className="input-brutal appearance-none"
             >
-              <option value="">-- Pilih kategori --</option>
+              <option value="">-- Select a category --</option>
               {CATEGORIES.map(c => (
                 <option key={c.value} value={c.value}>{c.label}</option>
               ))}
@@ -149,7 +149,7 @@ export default function SubmitPage() {
           {/* Description */}
           <div>
             <label className="block font-mono font-bold text-xs uppercase tracking-widest mb-2">
-              Deskripsi <span className="text-danger">*</span>
+              Description <span className="text-danger">*</span>
             </label>
             <textarea
               id="field-description"
@@ -157,7 +157,7 @@ export default function SubmitPage() {
               value={form.description}
               onChange={handleChange}
               rows={5}
-              placeholder="Jelaskan masalahnya secara detail: kondisi saat ini, dampaknya, dan sudah berapa lama terjadi..."
+              placeholder="Describe the issue in detail: current condition, impact, and how long it has persisted..."
               className="input-brutal resize-none"
             />
             {fieldErrors.description && (
@@ -168,7 +168,7 @@ export default function SubmitPage() {
           {/* Location */}
           <div>
             <label className="block font-mono font-bold text-xs uppercase tracking-widest mb-2">
-              Lokasi <span className="text-danger">*</span>
+              Location <span className="text-danger">*</span>
             </label>
             <input
               id="field-location"
@@ -176,7 +176,7 @@ export default function SubmitPage() {
               type="text"
               value={form.location_text}
               onChange={handleChange}
-              placeholder="Contoh: Jl. Pahlawan No. 10, RT 03/RW 05, Kelurahan Maju"
+              placeholder="e.g. Corner of Oak St. and Maple Ave., near the park entrance"
               className="input-brutal"
             />
             {fieldErrors.location_text && (
@@ -187,7 +187,7 @@ export default function SubmitPage() {
           {/* Image Upload */}
           <div>
             <label className="block font-mono font-bold text-xs uppercase tracking-widest mb-2">
-              Foto (opsional, maks 5MB)
+              Photo (optional, max 5MB)
             </label>
             <input
               id="field-image"
@@ -210,8 +210,8 @@ export default function SubmitPage() {
               ) : (
                 <div>
                   <p className="text-4xl mb-2">📷</p>
-                  <p className="font-bold text-sm">Klik untuk upload foto</p>
-                  <p className="text-xs text-ink/50 mt-1">JPG, PNG, atau WebP • Maks 5MB</p>
+                  <p className="font-bold text-sm">Click to upload a photo</p>
+                  <p className="text-xs text-ink/50 mt-1">JPG, PNG, or WebP • Max 5MB</p>
                 </div>
               )}
             </div>
@@ -221,7 +221,7 @@ export default function SubmitPage() {
                 onClick={() => { setImageFile(null); setImagePreview(null); }}
                 className="text-xs text-danger font-bold mt-2 hover:underline"
               >
-                ✕ Hapus foto
+                ✕ Remove photo
               </button>
             )}
             {fieldErrors.image && (
@@ -244,10 +244,10 @@ export default function SubmitPage() {
               disabled={loading}
               className="btn-brutal flex-1 text-center"
             >
-              {loading ? 'Mengirim...' : '📤 Kirim Laporan'}
+              {loading ? 'Submitting...' : '📤 Submit Report'}
             </button>
             <Link to="/" className="btn-outline px-6">
-              Batal
+              Cancel
             </Link>
           </div>
         </form>

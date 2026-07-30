@@ -69,15 +69,15 @@ export default function FeedPage() {
               <span className="font-mono font-bold text-accent text-xl tracking-tight">IT</span>
             </div>
             <p className="text-xs text-ink/50 hidden sm:block font-mono">
-              GitHub Issues untuk masalah di sekitarmu
+              GitHub Issues for community problems
             </p>
           </div>
           <div className="flex items-center gap-2">
             <Link to="/stats" id="nav-stats" className="btn-outline text-sm">
-              📊 Statistik
+              📊 Statistics
             </Link>
             <Link to="/submit" id="nav-submit" className="btn-brutal text-sm">
-              + Lapor Masalah
+              + Report Issue
             </Link>
           </div>
         </div>
@@ -88,17 +88,17 @@ export default function FeedPage() {
         <div className="mb-8">
           <div className="relative inline-block">
             <h1 className="text-4xl sm:text-5xl font-black text-ink leading-none">
-              LAPORAN
+              REPORTS
             </h1>
             <div
               className="absolute -top-3 -right-8 bg-accent border-3 border-ink px-2 py-0.5 text-xs font-mono font-bold"
               style={{ transform: 'rotate(-3deg)' }}
             >
-              TERBARU
+              LATEST
             </div>
           </div>
           <p className="text-ink/60 mt-2 font-medium">
-            Pantau, dukung, dan kawal penyelesaian masalah di komunitasmu.
+            Track, support, and follow the resolution of issues in your community.
           </p>
         </div>
 
@@ -118,7 +118,7 @@ export default function FeedPage() {
                 className={`border-3 border-ink px-3 py-2 text-sm font-bold shadow-brutal-sm transition-all duration-100
                   ${sort === 'upvotes' ? 'bg-ink text-bg' : 'bg-bg hover:bg-accent'}`}
               >
-                🔥 Terpopuler
+                🔥 Most Voted
               </button>
               <button
                 id="sort-newest"
@@ -126,7 +126,7 @@ export default function FeedPage() {
                 className={`border-3 border-ink px-3 py-2 text-sm font-bold shadow-brutal-sm transition-all duration-100
                   ${sort === 'newest' ? 'bg-ink text-bg' : 'bg-bg hover:bg-accent'}`}
               >
-                🕐 Terbaru
+                🕐 Newest
               </button>
             </div>
           </div>
@@ -136,16 +136,16 @@ export default function FeedPage() {
         {loading && (
           <div className="flex items-center justify-center py-20">
             <div className="border-3 border-ink bg-accent shadow-brutal px-8 py-4">
-              <p className="font-mono font-bold animate-pulse">Memuat laporan...</p>
+              <p className="font-mono font-bold animate-pulse">Loading reports...</p>
             </div>
           </div>
         )}
 
         {error && (
           <div className="border-3 border-danger bg-danger/10 shadow-brutal p-4 mb-6">
-            <p className="font-bold text-danger">⚠️ Gagal memuat: {error}</p>
+            <p className="font-bold text-danger">⚠️ Failed to load: {error}</p>
             <button onClick={fetchReports} className="btn-brutal mt-2 text-sm">
-              Coba Lagi
+              Try Again
             </button>
           </div>
         )}
@@ -153,9 +153,9 @@ export default function FeedPage() {
         {!loading && !error && reports.length === 0 && (
           <div className="border-3 border-ink bg-white shadow-brutal p-12 text-center">
             <p className="text-5xl mb-4">📋</p>
-            <p className="font-bold text-xl mb-2">Belum ada laporan</p>
-            <p className="text-ink/60 mb-6">Jadilah yang pertama melaporkan masalah!</p>
-            <Link to="/submit" className="btn-brutal">+ Lapor Sekarang</Link>
+            <p className="font-bold text-xl mb-2">No reports yet</p>
+            <p className="text-ink/60 mb-6">Be the first to report an issue!</p>
+            <Link to="/submit" className="btn-brutal">+ Report Now</Link>
           </div>
         )}
 

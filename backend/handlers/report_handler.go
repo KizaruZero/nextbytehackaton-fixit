@@ -53,7 +53,7 @@ func (h *ReportHandler) CreateReport(c *fiber.Ctx) error {
 	if err == nil && file != nil {
 		// Validate size
 		if file.Size > 5*1024*1024 {
-			return c.Status(400).JSON(fiber.Map{"error": "image must be less than 5MB"})
+			return c.Status(400).JSON(fiber.Map{"error": "image must be smaller than 5MB"})
 		}
 
 		// Validate type

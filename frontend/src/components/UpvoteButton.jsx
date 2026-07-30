@@ -15,7 +15,7 @@ export default function UpvoteButton({ count, voted, onClick, loading }) {
         }
         ${loading ? 'opacity-60' : ''}
       `}
-      title={voted ? 'Sudah diupvote' : 'Upvote laporan ini'}
+      title={voted ? 'Already upvoted' : 'Upvote this report'}
     >
       <span className="text-lg leading-none">{voted ? '▲' : '△'}</span>
       <span className="text-sm font-mono font-bold leading-tight mt-0.5">{count}</span>

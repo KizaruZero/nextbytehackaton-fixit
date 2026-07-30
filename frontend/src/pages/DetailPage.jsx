@@ -7,12 +7,12 @@ import UpvoteButton from '../components/UpvoteButton';
 import StatusTimeline from '../components/StatusTimeline';
 
 const CATEGORY_LABELS = {
-  jalan_rusak: '🛣️ Jalan Rusak',
-  sampah: '🗑️ Sampah',
-  lampu_mati: '💡 Lampu Mati',
-  fasilitas_umum: '🏗️ Fasilitas Umum',
-  keamanan: '🚨 Keamanan',
-  lainnya: '📌 Lainnya',
+  jalan_rusak: '🛣️ Damaged Road',
+  sampah: '🗑️ Waste / Trash',
+  lampu_mati: '💡 Broken Light',
+  fasilitas_umum: '🏗️ Public Facility',
+  keamanan: '🚨 Security',
+  lainnya: '📌 Other',
 };
 
 const VALID_STATUSES = [
@@ -22,7 +22,7 @@ const VALID_STATUSES = [
 ];
 
 function formatDate(dt) {
-  return new Date(dt).toLocaleString('id-ID', {
+  return new Date(dt).toLocaleString('en-US', {
     day: '2-digit', month: 'long', year: 'numeric',
     hour: '2-digit', minute: '2-digit',
   });
@@ -77,7 +77,7 @@ export default function DetailPage() {
       if (e.message.includes('already')) {
         setVoted(true);
       } else {
-        alert('Upvote gagal: ' + e.message);
+        alert('Upvote failed: ' + e.message);
       }
     } finally {
       setUpvoteLoading(false);
@@ -92,7 +92,7 @@ export default function DetailPage() {
       setReport(res.data);
       setNewStatus(res.data.status);
     } catch (e) {
-      alert('Gagal update status: ' + e.message);
+      alert('Failed to update status: ' + e.message);
     } finally {
       setStatusLoading(false);
     }
@@ -103,7 +103,7 @@ export default function DetailPage() {
   if (loading) return (
     <div className="min-h-screen bg-bg flex items-center justify-center">
       <div className="border-3 border-ink bg-accent shadow-brutal px-8 py-4">
-        <p className="font-mono font-bold animate-pulse">Memuat laporan...</p>
+        <p className="font-mono font-bold animate-pulse">Loading report...</p>
       </div>
     </div>
   );
@@ -113,7 +113,7 @@ export default function DetailPage() {
       <div className="border-3 border-danger bg-danger/10 shadow-brutal p-8 text-center max-w-md">
         <p className="text-2xl mb-2">⚠️</p>
         <p className="font-bold text-danger mb-4">{error}</p>
-        <button onClick={() => navigate('/')} className="btn-brutal">← Kembali ke Feed</button>
+        <button onClick={() => navigate('/')} className="btn-brutal">← Back to Feed</button>
       </div>
     </div>
   );
@@ -124,26 +124,19 @@ export default function DetailPage() {
 
   return (
     <div className="min-h-screen bg-bg">
-      {/* Header */}
       <header className="border-b-3 border-ink bg-bg sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link to="/" id="back-feed" className="btn-outline text-sm px-3 py-2">
-            ← Feed
-          </Link>
-          <div className="flex items-center gap-2">
-            <div className="bg-primary border-3 border-ink shadow-brutal px-3 py-1">
-              <span className="font-mono font-bold text-white text-xl tracking-tight">FIX</span>
-              <span className="font-mono font-bold text-accent text-xl tracking-tight">IT</span>
-            </div>
+          <Link to="/" id="back-feed" className="btn-outline text-sm px-3 py-2">← Feed</Link>
+          <div className="bg-primary border-3 border-ink shadow-brutal px-3 py-1">
+            <span className="font-mono font-bold text-white text-xl tracking-tight">FIX</span>
+            <span className="font-mono font-bold text-accent text-xl tracking-tight">IT</span>
           </div>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main content */}
           <div className="lg:col-span-2 flex flex-col gap-5">
-            {/* Image */}
             {imgSrc ? (
               <div className="border-3 border-ink overflow-hidden shadow-brutal">
                 <img src={imgSrc} alt={report.title} className="w-full object-cover max-h-80" />
@@ -154,7 +147,6 @@ export default function DetailPage() {
               </div>
             )}
 
-            {/* Report info */}
             <div className="border-3 border-ink bg-white shadow-brutal p-6">
               <div className="flex items-start justify-between gap-4 mb-4">
                 <div className="flex-1">
@@ -166,29 +158,21 @@ export default function DetailPage() {
                   </div>
                   <h1 className="text-2xl font-black leading-tight">{report.title}</h1>
                 </div>
-                <UpvoteButton
-                  count={report.upvote_count}
-                  voted={voted}
-                  onClick={handleUpvote}
-                  loading={upvoteLoading}
-                />
+                <UpvoteButton count={report.upvote_count} voted={voted} onClick={handleUpvote} loading={upvoteLoading} />
               </div>
-
               <div className="border-t-3 border-ink/20 pt-4 mb-4">
                 <p className="text-ink/80 leading-relaxed whitespace-pre-wrap">{report.description}</p>
               </div>
-
               <div className="flex flex-wrap gap-4 text-sm font-mono text-ink/60">
                 <span>📍 {report.location_text}</span>
                 <span>🕐 {formatDate(report.created_at)}</span>
               </div>
             </div>
 
-            {/* Status update (reporter only) */}
             {isReporter && (
               <div className="border-3 border-primary bg-primary/5 shadow-brutal p-5">
                 <p className="font-mono font-bold text-xs uppercase tracking-widest mb-3 text-primary">
-                  🛠️ Update Status (Kamu adalah pelapor)
+                  🛠️ Update Status (You are the reporter)
                 </p>
                 <div className="flex gap-3">
                   <select
@@ -207,14 +191,13 @@ export default function DetailPage() {
                     disabled={newStatus === report.status || statusLoading}
                     className="btn-brutal text-sm flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {statusLoading ? 'Menyimpan...' : 'Update'}
+                    {statusLoading ? 'Saving...' : 'Update'}
                   </button>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Sidebar: timeline */}
           <div className="lg:col-span-1">
             <div className="border-3 border-ink bg-white shadow-brutal p-5 sticky top-24">
               <StatusTimeline logs={report.status_logs || []} />

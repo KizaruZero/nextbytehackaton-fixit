@@ -5,7 +5,7 @@ const STATUS_CONFIG = {
 };
 
 function formatDateTime(dt) {
-  return new Date(dt).toLocaleString('id-ID', {
+  return new Date(dt).toLocaleString('en-US', {
     day: '2-digit', month: 'short', year: 'numeric',
     hour: '2-digit', minute: '2-digit',
   });
@@ -13,13 +13,13 @@ function formatDateTime(dt) {
 
 export default function StatusTimeline({ logs = [] }) {
   if (!logs.length) {
-    return <p className="text-sm text-ink/50 italic">Belum ada riwayat status.</p>;
+    return <p className="text-sm text-ink/50 italic">No status history yet.</p>;
   }
 
   return (
     <div className="relative">
       <h3 className="font-mono font-bold text-xs uppercase tracking-widest mb-4 text-ink">
-        Riwayat Status
+        Status History
       </h3>
       <div className="flex flex-col gap-0">
         {logs.map((log, i) => {

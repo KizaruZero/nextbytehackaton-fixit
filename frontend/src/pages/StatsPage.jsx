@@ -7,12 +7,12 @@ import {
 } from 'recharts';
 
 const CATEGORY_LABELS = {
-  jalan_rusak: 'Jalan Rusak',
-  sampah: 'Sampah',
-  lampu_mati: 'Lampu Mati',
-  fasilitas_umum: 'Fasilitas Umum',
-  keamanan: 'Keamanan',
-  lainnya: 'Lainnya',
+  jalan_rusak: 'Damaged Road',
+  sampah: 'Waste / Trash',
+  lampu_mati: 'Broken Light',
+  fasilitas_umum: 'Public Facility',
+  keamanan: 'Security',
+  lainnya: 'Other',
 };
 
 const BAR_COLORS = ['#4D61FC', '#FFDE59', '#FF3D3D', '#3DFFA2', '#111111', '#4D61FC'];
@@ -31,51 +31,45 @@ export default function StatsPage() {
 
   return (
     <div className="min-h-screen bg-bg">
-      {/* Header */}
       <header className="border-b-3 border-ink bg-bg sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link to="/" id="back-to-feed" className="btn-outline text-sm px-3 py-2">
-            ← Feed
-          </Link>
-          <div className="flex items-center gap-2">
-            <div className="bg-primary border-3 border-ink shadow-brutal px-3 py-1">
-              <span className="font-mono font-bold text-white text-xl tracking-tight">FIX</span>
-              <span className="font-mono font-bold text-accent text-xl tracking-tight">IT</span>
-            </div>
+          <Link to="/" id="back-to-feed" className="btn-outline text-sm px-3 py-2">← Feed</Link>
+          <div className="bg-primary border-3 border-ink shadow-brutal px-3 py-1">
+            <span className="font-mono font-bold text-white text-xl tracking-tight">FIX</span>
+            <span className="font-mono font-bold text-accent text-xl tracking-tight">IT</span>
           </div>
         </div>
       </header>
 
       <main className="max-w-5xl mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-4xl font-black text-ink">STATISTIK</h1>
-          <p className="text-ink/60 mt-1">Ringkasan laporan komunitas saat ini.</p>
+          <h1 className="text-4xl font-black text-ink">STATISTICS</h1>
+          <p className="text-ink/60 mt-1">A summary of community reports right now.</p>
         </div>
 
         {loading && (
           <div className="flex items-center justify-center py-20">
             <div className="border-3 border-ink bg-accent shadow-brutal px-8 py-4">
-              <p className="font-mono font-bold animate-pulse">Memuat statistik...</p>
+              <p className="font-mono font-bold animate-pulse">Loading statistics...</p>
             </div>
           </div>
         )}
 
         {error && (
           <div className="border-3 border-danger bg-danger/10 shadow-brutal p-4">
-            <p className="font-bold text-danger">⚠️ Gagal memuat: {error}</p>
+            <p className="font-bold text-danger">⚠️ Failed to load: {error}</p>
           </div>
         )}
 
         {stats && (
           <div className="flex flex-col gap-6">
-            {/* Summary cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
               <div className="border-3 border-ink bg-primary shadow-brutal p-5 text-white">
-                <p className="font-mono text-xs uppercase tracking-widest opacity-70">Total Laporan</p>
+                <p className="font-mono text-xs uppercase tracking-widest opacity-70">Total Reports</p>
                 <p className="text-5xl font-black mt-2">{stats.total_reports}</p>
               </div>
               <div className="border-3 border-ink bg-success shadow-brutal p-5 text-ink">
-                <p className="font-mono text-xs uppercase tracking-widest opacity-70">Terselesaikan</p>
+                <p className="font-mono text-xs uppercase tracking-widest opacity-70">Resolved</p>
                 <p className="text-5xl font-black mt-2">{stats.resolved_count}</p>
               </div>
               <div className="border-3 border-ink bg-accent shadow-brutal p-5 text-ink">
@@ -84,10 +78,9 @@ export default function StatsPage() {
               </div>
             </div>
 
-            {/* Bar chart */}
             <div className="border-3 border-ink bg-white shadow-brutal p-6">
               <h2 className="font-mono font-bold text-xs uppercase tracking-widest mb-6">
-                Laporan per Kategori
+                Reports by Category
               </h2>
               <ResponsiveContainer width="100%" height={260}>
                 <BarChart
@@ -98,14 +91,8 @@ export default function StatsPage() {
                   margin={{ top: 0, right: 0, left: -20, bottom: 0 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="#11111130" />
-                  <XAxis
-                    dataKey="name"
-                    tick={{ fontSize: 10, fontFamily: 'Space Mono', fontWeight: 700 }}
-                  />
-                  <YAxis
-                    tick={{ fontSize: 10, fontFamily: 'Space Mono' }}
-                    allowDecimals={false}
-                  />
+                  <XAxis dataKey="name" tick={{ fontSize: 10, fontFamily: 'Space Mono', fontWeight: 700 }} />
+                  <YAxis tick={{ fontSize: 10, fontFamily: 'Space Mono' }} allowDecimals={false} />
                   <Tooltip
                     contentStyle={{
                       border: '3px solid #111111',
@@ -124,11 +111,10 @@ export default function StatsPage() {
               </ResponsiveContainer>
             </div>
 
-            {/* Top voted */}
             {stats.top_voted && stats.top_voted.length > 0 && (
               <div className="border-3 border-ink bg-white shadow-brutal p-6">
                 <h2 className="font-mono font-bold text-xs uppercase tracking-widest mb-4">
-                  🔥 Top 5 Laporan Terpopuler
+                  🔥 Top 5 Most Voted Reports
                 </h2>
                 <div className="flex flex-col gap-3">
                   {stats.top_voted.map((r, i) => (
@@ -138,9 +124,7 @@ export default function StatsPage() {
                       id={`top-report-${r.id}`}
                       className="flex items-center gap-4 border-3 border-ink p-3 hover:bg-accent/20 transition-colors"
                     >
-                      <span className="font-mono font-black text-2xl text-ink/30 w-8 text-center">
-                        #{i + 1}
-                      </span>
+                      <span className="font-mono font-black text-2xl text-ink/30 w-8 text-center">#{i + 1}</span>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold truncate">{r.title}</p>
                         <p className="text-xs text-ink/50 font-mono">{r.location_text}</p>
