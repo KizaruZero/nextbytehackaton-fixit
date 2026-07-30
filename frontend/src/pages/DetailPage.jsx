@@ -211,8 +211,20 @@ export default function DetailPage() {
               <div className="border-t-3 border-ink/20 pt-4 mb-4">
                 <p className="text-ink/80 leading-relaxed whitespace-pre-wrap">{report.description}</p>
               </div>
-              <div className="flex flex-wrap gap-4 text-sm font-mono text-ink/60">
-                <span>📍 {report.location_text}</span>
+              <div className="flex flex-wrap items-center gap-3 text-sm font-mono text-ink/60">
+                {report.location_text && (
+                  <span>📍 {report.location_text}</span>
+                )}
+                {report.latitude && report.longitude && (
+                  <a
+                    href={`https://www.google.com/maps?q=${report.latitude},${report.longitude}`}
+                    target="_blank" rel="noopener noreferrer"
+                    onClick={e => e.stopPropagation()}
+                    className="inline-flex items-center gap-1 border-3 border-ink bg-primary text-white font-bold px-3 py-1 text-xs shadow-brutal-sm hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal transition-all"
+                  >
+                    🗺️ {report.latitude.toFixed(5)}, {report.longitude.toFixed(5)}
+                  </a>
+                )}
                 <span>🕐 {formatDate(report.created_at)}</span>
               </div>
             </div>
@@ -220,16 +232,7 @@ export default function DetailPage() {
             {/* Map */}
             {report.latitude && report.longitude && (
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <p className="font-mono font-bold text-xs uppercase tracking-widest">📍 Pinned Location</p>
-                  <a
-                    href={`https://www.google.com/maps?q=${report.latitude},${report.longitude}`}
-                    target="_blank" rel="noopener noreferrer"
-                    className="text-xs border-3 border-ink px-3 py-1.5 font-bold bg-bg hover:bg-primary hover:text-white shadow-brutal-sm transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal"
-                  >
-                    Open in Google Maps ↗
-                  </a>
-                </div>
+                <p className="font-mono font-bold text-xs uppercase tracking-widest mb-2">📍 Exact Location on Map</p>
                 <Suspense fallback={
                   <div className="border-3 border-ink bg-accent/20 h-[280px] flex items-center justify-center">
                     <p className="font-mono font-bold animate-pulse">Loading map...</p>

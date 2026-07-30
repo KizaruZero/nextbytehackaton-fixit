@@ -33,14 +33,8 @@ export default function SubmitPage() {
   };
 
   const handleMapPick = (picked) => {
+    // Only store the coordinates — do NOT touch the location_text field
     setCoords(picked);
-    // Auto-fill location text with coordinates if field is empty
-    if (!form.location_text.trim()) {
-      setForm(prev => ({
-        ...prev,
-        location_text: `${picked.lat.toFixed(5)}, ${picked.lng.toFixed(5)}`,
-      }));
-    }
   };
 
   const handleUseGPS = () => {
@@ -171,24 +165,25 @@ export default function SubmitPage() {
             {fieldErrors.description && <p className="text-danger text-xs font-bold mt-1">⚠️ {fieldErrors.description}</p>}
           </div>
 
-          {/* Location text */}
+          {/* ── Field 1: Location Description (manual text) ── */}
           <div>
             <label className="block font-mono font-bold text-xs uppercase tracking-widest mb-2">
-              Location <span className="text-danger">*</span>
+              Location Description <span className="text-danger">*</span>
             </label>
             <input id="field-location" name="location_text" type="text"
               value={form.location_text} onChange={handleChange}
               placeholder="e.g. Corner of Oak St. and Maple Ave., near the park entrance"
               className="input-brutal" />
+            <p className="text-xs text-ink/40 mt-1">Describe the location in words so it's easy to find.</p>
             {fieldErrors.location_text && <p className="text-danger text-xs font-bold mt-1">⚠️ {fieldErrors.location_text}</p>}
           </div>
 
-          {/* Map Location Picker */}
+          {/* ── Field 2: GPS / Map Pin (optional) ── */}
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="font-mono font-bold text-xs uppercase tracking-widest">
-                Pin on Map
-                {coords && <span className="ml-2 text-success normal-case font-normal">✓ Pinned</span>}
+                GPS Coordinates
+                <span className="ml-2 font-normal normal-case text-ink/40">(optional)</span>
               </label>
               <div className="flex gap-2">
                 <button type="button" onClick={handleUseGPS}
@@ -197,27 +192,50 @@ export default function SubmitPage() {
                 </button>
                 <button type="button" onClick={() => setShowMap(v => !v)}
                   className="text-xs border-3 border-ink px-3 py-1.5 font-bold bg-bg hover:bg-primary hover:text-white shadow-brutal-sm transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal">
-                  {showMap ? '▲ Hide Map' : '🗺️ Open Map'}
+                  {showMap ? '▲ Hide Map' : '🗺️ Pick on Map'}
                 </button>
               </div>
             </div>
 
-            {coords && (
-              <p className="text-xs font-mono text-ink/50 mb-2">
-                📍 {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}
-                <button type="button" onClick={() => setCoords(null)}
-                  className="ml-2 text-danger hover:underline">✕ Clear</button>
-              </p>
+            {/* Coordinate display */}
+            {coords ? (
+              <div className="border-3 border-success bg-success/10 p-3 flex items-center justify-between">
+                <div>
+                  <p className="font-mono font-bold text-sm">
+                    {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}
+                  </p>
+                  <p className="text-xs text-ink/50 mt-0.5">Coordinates saved — will be stored with your report.</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={`https://www.google.com/maps?q=${coords.lat},${coords.lng}`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="text-xs border-3 border-ink px-3 py-1.5 font-bold bg-primary text-white shadow-brutal-sm hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal transition-all"
+                    onClick={e => e.stopPropagation()}
+                  >
+                    🗺️ Preview
+                  </a>
+                  <button type="button" onClick={() => setCoords(null)}
+                    className="text-xs text-danger font-bold hover:underline">✕ Clear</button>
+                </div>
+              </div>
+            ) : (
+              <div className="border-3 border-dashed border-ink/30 p-3 text-center">
+                <p className="text-xs text-ink/40 font-mono">No coordinates set — use GPS or pick on the map below.</p>
+              </div>
             )}
 
+            {/* Map */}
             {showMap && (
               <Suspense fallback={
-                <div className="border-3 border-ink bg-accent/20 h-[280px] flex items-center justify-center">
+                <div className="border-3 border-ink bg-accent/20 h-[280px] flex items-center justify-center mt-3">
                   <p className="font-mono font-bold animate-pulse">Loading map...</p>
                 </div>
               }>
-                <LocationPicker coords={coords} onPick={handleMapPick} />
-                <p className="text-xs text-ink/50 mt-2 font-mono">Click anywhere on the map to drop a pin.</p>
+                <div className="mt-3">
+                  <LocationPicker coords={coords} onPick={handleMapPick} />
+                  <p className="text-xs text-ink/50 mt-2 font-mono">Click anywhere on the map to drop a pin.</p>
+                </div>
               </Suspense>
             )}
           </div>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StatusBadge from './StatusBadge';
 import UpvoteButton from './UpvoteButton';
-import { api, UPLOADS_URL } from '../api/client';
+import { UPLOADS_URL } from '../api/client';
 
 const CATEGORY_LABELS = {
   jalan_rusak: '🛣️ Damaged Road',
@@ -28,31 +28,32 @@ export default function ReportCard({ report, votedIds, onVote }) {
     e.stopPropagation();
     if (voted || loading) return;
     setLoading(true);
-    try {
-      await onVote(report.id);
-    } finally {
-      setLoading(false);
-    }
+    try { await onVote(report.id); }
+    finally { setLoading(false); }
   };
 
-  const imgSrc = report.image_path
-    ? `${UPLOADS_URL}${report.image_path}`
-    : null;
+  const handleMapsClick = (e) => {
+    e.stopPropagation();
+    window.open(
+      `https://www.google.com/maps?q=${report.latitude},${report.longitude}`,
+      '_blank', 'noopener,noreferrer'
+    );
+  };
+
+  const imgSrc = report.image_path ? `${UPLOADS_URL}${report.image_path}` : null;
+  const hasCoords = report.latitude && report.longitude;
 
   return (
+    // h-full ensures the card fills the grid cell height → equal card heights in every row
     <article
       id={`report-card-${report.id}`}
-      className="card-brutal cursor-pointer flex flex-col"
+      className="card-brutal cursor-pointer flex flex-col h-full"
       onClick={() => navigate(`/reports/${report.id}`)}
     >
-      {/* Image */}
-      <div className="border-b-3 border-ink h-44 overflow-hidden flex-shrink-0 bg-ink/5">
+      {/* Fixed-height image area — same for every card */}
+      <div className="border-b-3 border-ink h-44 overflow-hidden flex-shrink-0">
         {imgSrc ? (
-          <img
-            src={imgSrc}
-            alt={report.title}
-            className="w-full h-full object-cover"
-          />
+          <img src={imgSrc} alt={report.title} className="w-full h-full object-cover" />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-accent/20">
             <span className="text-4xl opacity-40">📷</span>
@@ -60,24 +61,36 @@ export default function ReportCard({ report, votedIds, onVote }) {
         )}
       </div>
 
-      {/* Content */}
+      {/* Content — flex-1 pushes footer to bottom */}
       <div className="p-4 flex flex-col flex-1 gap-2">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-mono text-ink/50 mb-1">
-              {CATEGORY_LABELS[report.category] || report.category}
-            </p>
-            <h2 className="font-bold text-base leading-tight line-clamp-2">{report.title}</h2>
-          </div>
+        <div>
+          <p className="text-xs font-mono text-ink/50 mb-1">
+            {CATEGORY_LABELS[report.category] || report.category}
+          </p>
+          <h2 className="font-bold text-base leading-tight line-clamp-2">{report.title}</h2>
         </div>
 
-        <p className="text-sm text-ink/70 line-clamp-2">{report.description}</p>
+        <p className="text-sm text-ink/70 line-clamp-2 flex-1">{report.description}</p>
 
+        {/* Location row */}
         <div className="flex items-center gap-2 text-xs font-mono text-ink/50 mt-auto">
-          <span>📍 {report.location_text}</span>
+          {report.location_text && (
+            <span className="truncate">📍 {report.location_text}</span>
+          )}
+          {hasCoords && (
+            <button
+              onClick={handleMapsClick}
+              className="flex-shrink-0 border-2 border-ink bg-primary text-white font-bold px-2 py-0.5
+                         hover:bg-primary/80 transition-colors shadow-brutal-sm text-[10px]"
+              title={`${report.latitude}, ${report.longitude}`}
+            >
+              🗺️ Maps
+            </button>
+          )}
         </div>
 
-        <div className="flex items-center justify-between mt-2 pt-3 border-t-3 border-ink/20">
+        {/* Footer */}
+        <div className="flex items-center justify-between pt-3 border-t-3 border-ink/20">
           <div className="flex items-center gap-2">
             <StatusBadge status={report.status} />
             <span className="text-xs font-mono text-ink/40">{formatDate(report.created_at)}</span>

@@ -212,7 +212,7 @@ export default function FeedPage() {
         {!loading && displayedReports.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {displayedReports.map((report, idx) => (
-              <div key={report.id} className="relative">
+              <div key={report.id} className="relative h-full">
                 {nearMeActive && userCoords && report.latitude && report.longitude && (
                   <div className="absolute top-2 left-2 z-10 border-3 border-ink bg-success px-2 py-0.5 text-xs font-mono font-bold shadow-brutal-sm">
                     📍 {haversineKm(userCoords.lat, userCoords.lng, report.latitude, report.longitude).toFixed(1)}km
