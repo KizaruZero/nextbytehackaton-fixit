@@ -1,80 +1,158 @@
-# FixIt — Lapor & Selesaikan
+# FixIt — Report. Vote. Resolve.
 
-> "GitHub Issues untuk masalah di lingkungan sekitar."
+A community-driven civic reporting platform. Residents report local issues (broken infrastructure, trash, safety hazards, etc.), the community upvotes what's most urgent, and progress is tracked transparently from report to resolution.
 
-Platform laporan masalah komunitas di mana warga bisa **submit**, **upvote**, dan **pantau status** penyelesaian masalah di lingkungan mereka.
+Built for **Next Byte Hacks V3**.
 
-## 🚀 Fitur Utama
+---
 
-- **Submit laporan** — judul, deskripsi, kategori, foto, lokasi
-- **Feed laporan** — sort by upvote/terbaru, filter kategori & status
-- **Upvote** — 1 device = 1 vote per laporan (via device token)
-- **Detail laporan** — foto, deskripsi lengkap, timeline riwayat status
-- **Update status** — Pending → In Progress → Resolved (hanya pelapor asli)
-- **Statistik** — total laporan, resolved rate, chart per kategori
+## Table of Contents
+- [Features](#features)
+- [Design](#design)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [API Reference](#api-reference)
+- [Screenshots](#screenshots)
+- [Roadmap](#roadmap)
 
-## 🛠️ Tech Stack
+---
 
-| Layer | Teknologi |
+## Features
+
+### Core
+- 📝 **Report an issue** — title, description, category, photo upload, and location picked directly on an interactive map
+- 📋 **Feed** — browse all reports, sorted by upvotes or recency, filterable by category and status
+- ⬆️ **Upvote** — one vote per device, community-driven prioritization (no admin gatekeeping)
+- 🔄 **Status tracking** — Pending → In Progress → Resolved, with a full timeline of every change
+- 🔍 **Detail view** — full report info, photo, status history
+
+### Added enhancements
+- 🗺️ **Map location picker** — drop a pin instead of typing an address; generates a direct map link
+- 🏠 **Landing page** — clean first impression before entering the feed
+- 🔗 **Share button** — copy a report's link to clipboard instantly, no backend needed
+- 🖼️ **Image lightbox** — click any photo for a fullscreen view
+- 💬 **Comments** — add context or confirm resolution on any report
+- 📍 **"Near Me" filter** — surface reports closest to the user's current location using GPS
+- ✨ **Upvote animation** — lightweight, satisfying feedback on interaction
+- 🏷️ **Trending / Just Reported badges** — surface high-engagement or brand-new reports at a glance
+
+---
+
+## Design
+
+FixIt uses a **neo-brutalist** design system: thick black borders, hard offset shadows, flat high-contrast colors, and no border-radius. This was a deliberate choice — the visual language mirrors the app's purpose: direct, transparent, no-nonsense civic reporting.
+
+**Color tokens:**
+| Token | Hex | Usage |
+|---|---|---|
+| `--color-bg` | `#FFFDF6` | Background |
+| `--color-text` | `#111111` | Text, borders |
+| `--color-primary` | `#4D61FC` | CTA, "In Progress" status |
+| `--color-accent` | `#FFDE59` | Highlights, "Pending" status, active upvote |
+| `--color-danger` | `#FF3D3D` | Urgent categories |
+| `--color-success` | `#3DFFA2` | "Resolved" status |
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
 |---|---|
-| Backend | Go + Fiber v2 + GORM |
-| Database | SQLite (pure Go, no CGO) |
-| Frontend | React + Vite + Tailwind CSS v3 |
-| Auth | Device token UUID (localStorage) |
+| Backend | Go + Fiber |
+| Database | SQLite |
+| Frontend | React (Vite) + Tailwind CSS |
+| Maps | [insert map library used, e.g. Leaflet] |
+| File storage | Local filesystem (`/uploads`) |
+| Identity | Device token (UUID in `localStorage`), no login required |
 
-## 📦 Cara Menjalankan
+---
 
-### Backend
-
-```bash
-cd backend
-go mod tidy
-go run main.go
-# Server jalan di http://localhost:8080
-```
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-# App jalan di http://localhost:5173
-```
-
-> Pastikan backend sudah running sebelum membuka frontend.
-
-## 📁 Struktur Folder
+## Project Structure
 
 ```
 fixit/
 ├── backend/
 │   ├── main.go
-│   ├── go.mod
-│   ├── config/database.go
-│   ├── models/          # report.go, upvote.go, status_log.go
-│   ├── handlers/        # report_handler.go, upvote_handler.go, stats_handler.go
-│   ├── middleware/      # device_token.go
-│   ├── routes/          # routes.go
-│   └── uploads/         # foto tersimpan di sini
+│   ├── config/
+│   ├── models/          # Report, Upvote, StatusLog, Comment
+│   ├── handlers/
+│   ├── middleware/
+│   ├── routes/
+│   └── uploads/          # uploaded report photos
 │
-└── frontend/
-    ├── src/
-    │   ├── api/client.js
-    │   ├── utils/deviceToken.js
-    │   ├── components/  # ReportCard, StatusBadge, UpvoteButton, dll
-    │   └── pages/       # FeedPage, SubmitPage, DetailPage, StatsPage
-    └── ...
+├── frontend/
+│   ├── src/
+│   │   ├── pages/         # Landing, Feed, Submit, Detail
+│   │   ├── components/    # ReportCard, StatusBadge, UpvoteButton, MapPicker, Lightbox, CommentSection
+│   │   ├── api/
+│   │   └── utils/
+│   └── public/
+│
+└── README.md
 ```
 
-## 🔌 API Endpoints
+---
 
-| Method | Endpoint | Deskripsi |
+## Getting Started
+
+### Prerequisites
+- Go 1.21+
+- Node.js 18+
+- npm or yarn
+
+### Backend Setup
+```bash
+cd backend
+go mod tidy
+go run main.go
+# Server runs at http://localhost:8080
+```
+
+### Frontend Setup
+```bash
+cd frontend
+npm install
+npm run dev
+# App runs at http://localhost:5173
+```
+
+Make sure the frontend's API base URL (in `src/api/client.js`) points to `http://localhost:8080/api/v1`.
+
+---
+
+## API Reference
+
+Base URL: `/api/v1`
+
+| Method | Endpoint | Description |
 |---|---|---|
-| POST | `/api/v1/reports` | Buat laporan baru (multipart) |
-| GET | `/api/v1/reports` | List laporan (sort, filter) |
-| GET | `/api/v1/reports/:id` | Detail laporan + status logs |
-| POST | `/api/v1/reports/:id/upvote` | Upvote laporan |
-| PATCH | `/api/v1/reports/:id/status` | Update status |
-| GET | `/api/v1/stats` | Statistik dashboard |
-| GET | `/uploads/:filename` | Serve foto laporan |
+| `POST` | `/reports` | Create a new report (multipart form, includes image) |
+| `GET` | `/reports` | List reports — supports `sort`, `category`, `status`, `near` (lat/lng) query params |
+| `GET` | `/reports/:id` | Get report detail including status history and comments |
+| `POST` | `/reports/:id/upvote` | Upvote a report (one per device) |
+| `PATCH` | `/reports/:id/status` | Update a report's status |
+| `POST` | `/reports/:id/comments` | Add a comment to a report |
+| `GET` | `/uploads/:filename` | Serve an uploaded report photo |
+
+All write requests require an `X-Device-Token` header for identity tracking (no login required).
+
+---
+
+## Screenshots
+
+> _Add screenshots here before submitting — landing page, feed, submit form with map picker, and detail page with timeline/comments are the most important shots to include._
+
+---
+
+## Roadmap
+
+- [ ] Full authentication for reporters and local authorities
+- [ ] Push notifications on status change
+- [ ] Admin dashboard for community organizations / local government
+- [ ] Real-time feed updates via WebSocket
+
+---
+
+## License
+MIT — free to use, modify, and build on for your own community.
