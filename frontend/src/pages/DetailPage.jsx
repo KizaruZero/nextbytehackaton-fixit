@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { api, UPLOADS_URL } from '../api/client';
 import { getDeviceToken } from '../utils/deviceToken';
 import StatusBadge from '../components/StatusBadge';
 import UpvoteButton from '../components/UpvoteButton';
 import StatusTimeline from '../components/StatusTimeline';
+
+const LocationPicker = lazy(() => import('../components/LocationPicker'));
 
 const CATEGORY_LABELS = {
   jalan_rusak: '🛣️ Damaged Road',
@@ -126,11 +128,13 @@ export default function DetailPage() {
     <div className="min-h-screen bg-bg">
       <header className="border-b-3 border-ink bg-bg sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link to="/" id="back-feed" className="btn-outline text-sm px-3 py-2">← Feed</Link>
-          <div className="bg-primary border-3 border-ink shadow-brutal px-3 py-1">
-            <span className="font-mono font-bold text-white text-xl tracking-tight">FIX</span>
-            <span className="font-mono font-bold text-accent text-xl tracking-tight">IT</span>
-          </div>
+          <Link to="/feed" id="back-feed" className="btn-outline text-sm px-3 py-2">← Feed</Link>
+          <Link to="/">
+            <div className="bg-primary border-3 border-ink shadow-brutal px-3 py-1">
+              <span className="font-mono font-bold text-white text-xl tracking-tight">FIX</span>
+              <span className="font-mono font-bold text-accent text-xl tracking-tight">IT</span>
+            </div>
+          </Link>
         </div>
       </header>
 
@@ -168,6 +172,33 @@ export default function DetailPage() {
                 <span>🕐 {formatDate(report.created_at)}</span>
               </div>
             </div>
+
+            {/* Map — shown only if coordinates are available */}
+            {report.latitude && report.longitude && (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="font-mono font-bold text-xs uppercase tracking-widest">📍 Pinned Location</p>
+                  <a
+                    href={`https://www.google.com/maps?q=${report.latitude},${report.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs border-3 border-ink px-3 py-1.5 font-bold bg-bg hover:bg-primary hover:text-white shadow-brutal-sm transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-brutal"
+                  >
+                    Open in Google Maps ↗
+                  </a>
+                </div>
+                <Suspense fallback={
+                  <div className="border-3 border-ink bg-accent/20 h-[280px] flex items-center justify-center">
+                    <p className="font-mono font-bold animate-pulse">Loading map...</p>
+                  </div>
+                }>
+                  <LocationPicker
+                    coords={{ lat: report.latitude, lng: report.longitude }}
+                    readonly={true}
+                  />
+                </Suspense>
+              </div>
+            )}
 
             {isReporter && (
               <div className="border-3 border-primary bg-primary/5 shadow-brutal p-5">

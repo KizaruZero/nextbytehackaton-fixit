@@ -1,3 +1,6 @@
+/* Leaflet CSS */
+@import 'leaflet/dist/leaflet.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -25,19 +28,17 @@ body {
   min-height: 100vh;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--color-bg);
-  border-left: 2px solid var(--color-border);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+/* Override leaflet z-index so it doesn't bleed over sticky header */
+.leaflet-container {
+  z-index: 1;
 }
 
-/* Noise texture overlay */
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--color-bg); border-left: 2px solid var(--color-border); }
+::-webkit-scrollbar-thumb { background: var(--color-border); }
+
+/* Subtle noise texture */
 body::before {
   content: '';
   position: fixed;
@@ -54,47 +55,31 @@ body::before {
     @apply border-3 border-ink bg-primary text-white font-bold px-5 py-2.5 shadow-brutal
            transition-all duration-100 cursor-pointer select-none;
   }
-  .btn-brutal:hover {
-    @apply translate-x-1 translate-y-1 shadow-brutal-sm;
-  }
-  .btn-brutal:active {
-    @apply translate-x-[4px] translate-y-[4px] shadow-none;
-  }
+  .btn-brutal:hover { @apply translate-x-1 translate-y-1 shadow-brutal-sm; }
+  .btn-brutal:active { @apply translate-x-[4px] translate-y-[4px] shadow-none; }
 
   .btn-accent {
     @apply border-3 border-ink bg-accent text-ink font-bold px-5 py-2.5 shadow-brutal
            transition-all duration-100 cursor-pointer select-none;
   }
-  .btn-accent:hover {
-    @apply translate-x-1 translate-y-1 shadow-brutal-sm;
-  }
-  .btn-accent:active {
-    @apply translate-x-[4px] translate-y-[4px] shadow-none;
-  }
+  .btn-accent:hover { @apply translate-x-1 translate-y-1 shadow-brutal-sm; }
+  .btn-accent:active { @apply translate-x-[4px] translate-y-[4px] shadow-none; }
 
   .btn-outline {
     @apply border-3 border-ink bg-bg text-ink font-bold px-5 py-2.5 shadow-brutal
            transition-all duration-100 cursor-pointer select-none;
   }
-  .btn-outline:hover {
-    @apply translate-x-1 translate-y-1 shadow-brutal-sm;
-  }
-  .btn-outline:active {
-    @apply translate-x-[4px] translate-y-[4px] shadow-none;
-  }
+  .btn-outline:hover { @apply translate-x-1 translate-y-1 shadow-brutal-sm; }
+  .btn-outline:active { @apply translate-x-[4px] translate-y-[4px] shadow-none; }
 
   .input-brutal {
     @apply border-3 border-ink bg-white px-4 py-2.5 w-full font-medium
            outline-none transition-all duration-150;
   }
-  .input-brutal:focus {
-    @apply border-primary shadow-brutal;
-  }
+  .input-brutal:focus { @apply border-primary shadow-brutal; }
 
   .card-brutal {
     @apply border-3 border-ink bg-white shadow-brutal transition-all duration-100;
   }
-  .card-brutal:hover {
-    @apply -translate-x-1 -translate-y-1 shadow-brutal-hover;
-  }
+  .card-brutal:hover { @apply -translate-x-1 -translate-y-1 shadow-brutal-hover; }
 }

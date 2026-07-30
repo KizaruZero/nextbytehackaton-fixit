@@ -64,10 +64,12 @@ export default function FeedPage() {
       <header className="border-b-3 border-ink bg-bg sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-primary border-3 border-ink shadow-brutal px-3 py-1">
-              <span className="font-mono font-bold text-white text-xl tracking-tight">FIX</span>
-              <span className="font-mono font-bold text-accent text-xl tracking-tight">IT</span>
-            </div>
+            <Link to="/">
+              <div className="bg-primary border-3 border-ink shadow-brutal px-3 py-1">
+                <span className="font-mono font-bold text-white text-xl tracking-tight">FIX</span>
+                <span className="font-mono font-bold text-accent text-xl tracking-tight">IT</span>
+              </div>
+            </Link>
             <p className="text-xs text-ink/50 hidden sm:block font-mono">
               GitHub Issues for community problems
             </p>

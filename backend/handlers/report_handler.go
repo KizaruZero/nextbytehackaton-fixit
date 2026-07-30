@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -94,6 +95,18 @@ func (h *ReportHandler) CreateReport(c *fiber.Ctx) error {
 		Status:              "pending",
 		UpvoteCount:         0,
 		ReporterDeviceToken: deviceToken,
+	}
+
+	// Parse optional coordinates
+	if latStr := c.FormValue("latitude"); latStr != "" {
+		if lat, err := strconv.ParseFloat(latStr, 64); err == nil {
+			report.Latitude = &lat
+		}
+	}
+	if lngStr := c.FormValue("longitude"); lngStr != "" {
+		if lng, err := strconv.ParseFloat(lngStr, 64); err == nil {
+			report.Longitude = &lng
+		}
 	}
 
 	if err := h.DB.Create(&report).Error; err != nil {
