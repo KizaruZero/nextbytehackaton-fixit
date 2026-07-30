@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api/client';
+import { haversineKm, getCurrentPosition } from '../utils/geo';
 import ReportCard from '../components/ReportCard';
 import CategoryFilter from '../components/CategoryFilter';
 
@@ -11,6 +12,11 @@ export default function FeedPage() {
   const [sort, setSort] = useState('upvotes');
   const [category, setCategory] = useState('');
   const [status, setStatus] = useState('');
+  // Near Me
+  const [userCoords, setUserCoords] = useState(null); // { lat, lng }
+  const [nearMeRadius] = useState(10); // km
+  const [nearMeLoading, setNearMeLoading] = useState(false);
+  const [nearMeActive, setNearMeActive] = useState(false);
   const [votedIds, setVotedIds] = useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem('fixit_voted_ids') || '[]');
@@ -57,6 +63,28 @@ export default function FeedPage() {
       console.error('Upvote error:', e.message);
     }
   };
+
+  const handleNearMe = async () => {
+    if (nearMeActive) { setNearMeActive(false); setUserCoords(null); return; }
+    setNearMeLoading(true);
+    try {
+      const pos = await getCurrentPosition();
+      setUserCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+      setNearMeActive(true);
+    } catch {
+      alert('Could not get your location. Please allow location access in your browser.');
+    } finally { setNearMeLoading(false); }
+  };
+
+  // Client-side Near Me filter + sort by distance
+  const displayedReports = nearMeActive && userCoords
+    ? reports
+        .filter(r => r.latitude && r.longitude &&
+          haversineKm(userCoords.lat, userCoords.lng, r.latitude, r.longitude) <= nearMeRadius)
+        .sort((a, b) =>
+          haversineKm(userCoords.lat, userCoords.lng, a.latitude, a.longitude) -
+          haversineKm(userCoords.lat, userCoords.lng, b.latitude, b.longitude))
+    : reports;
 
   return (
     <div className="min-h-screen bg-bg">
@@ -113,20 +141,29 @@ export default function FeedPage() {
               onCategoryChange={setCategory}
               onStatusChange={setStatus}
             />
-            <div className="flex gap-2 flex-shrink-0">
+            <div className="flex gap-2 flex-shrink-0 flex-wrap">
+              <button
+                id="btn-near-me"
+                onClick={handleNearMe}
+                disabled={nearMeLoading}
+                className={`border-3 border-ink px-3 py-2 text-sm font-bold shadow-brutal-sm transition-all duration-100 disabled:opacity-60
+                  ${nearMeActive ? 'bg-success text-ink' : 'bg-bg text-ink hover:bg-success/50'}`}
+              >
+                {nearMeLoading ? '📍 Getting GPS...' : nearMeActive ? `✓ Near Me (${nearMeRadius}km)` : '📍 Near Me'}
+              </button>
               <button
                 id="sort-upvotes"
-                onClick={() => setSort('upvotes')}
+                onClick={() => { setSort('upvotes'); setNearMeActive(false); }}
                 className={`border-3 border-ink px-3 py-2 text-sm font-bold shadow-brutal-sm transition-all duration-100
-                  ${sort === 'upvotes' ? 'bg-ink text-bg' : 'bg-bg hover:bg-accent'}`}
+                  ${sort === 'upvotes' && !nearMeActive ? 'bg-ink text-bg' : 'bg-bg hover:bg-accent'}`}
               >
                 🔥 Most Voted
               </button>
               <button
                 id="sort-newest"
-                onClick={() => setSort('newest')}
+                onClick={() => { setSort('newest'); setNearMeActive(false); }}
                 className={`border-3 border-ink px-3 py-2 text-sm font-bold shadow-brutal-sm transition-all duration-100
-                  ${sort === 'newest' ? 'bg-ink text-bg' : 'bg-bg hover:bg-accent'}`}
+                  ${sort === 'newest' && !nearMeActive ? 'bg-ink text-bg' : 'bg-bg hover:bg-accent'}`}
               >
                 🕐 Newest
               </button>
@@ -152,7 +189,18 @@ export default function FeedPage() {
           </div>
         )}
 
-        {!loading && !error && reports.length === 0 && (
+        {nearMeActive && (
+          <div className="border-3 border-success bg-success/10 shadow-brutal-sm p-3 mb-4 flex items-center justify-between">
+            <p className="text-sm font-bold">
+              📍 Showing reports within {nearMeRadius}km of your location
+              {displayedReports.length === 0 && ' — none found. Try moving closer or reporting one!'}
+            </p>
+            <button onClick={() => { setNearMeActive(false); setUserCoords(null); }}
+              className="text-xs font-bold text-ink/60 hover:text-danger">✕ Clear</button>
+          </div>
+        )}
+
+        {!loading && !error && displayedReports.length === 0 && !nearMeActive && (
           <div className="border-3 border-ink bg-white shadow-brutal p-12 text-center">
             <p className="text-5xl mb-4">📋</p>
             <p className="font-bold text-xl mb-2">No reports yet</p>
@@ -161,15 +209,21 @@ export default function FeedPage() {
           </div>
         )}
 
-        {!loading && reports.length > 0 && (
+        {!loading && displayedReports.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {reports.map(report => (
-              <ReportCard
-                key={report.id}
-                report={report}
-                votedIds={votedIds}
-                onVote={handleVote}
-              />
+            {displayedReports.map((report, idx) => (
+              <div key={report.id} className="relative">
+                {nearMeActive && userCoords && report.latitude && report.longitude && (
+                  <div className="absolute top-2 left-2 z-10 border-3 border-ink bg-success px-2 py-0.5 text-xs font-mono font-bold shadow-brutal-sm">
+                    📍 {haversineKm(userCoords.lat, userCoords.lng, report.latitude, report.longitude).toFixed(1)}km
+                  </div>
+                )}
+                <ReportCard
+                  report={report}
+                  votedIds={votedIds}
+                  onVote={handleVote}
+                />
+              </div>
             ))}
           </div>
         )}

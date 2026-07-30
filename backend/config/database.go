@@ -22,7 +22,7 @@ func InitDB() *gorm.DB {
 	}
 
 	// Create unique index on upvotes manually after migration
-	err = DB.AutoMigrate(&models.Report{}, &models.Upvote{}, &models.StatusLog{})
+	err = DB.AutoMigrate(&models.Report{}, &models.Upvote{}, &models.StatusLog{}, &models.Comment{})
 	if err != nil {
 		log.Fatal("Failed to migrate database:", err)
 	}

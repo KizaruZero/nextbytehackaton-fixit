@@ -52,6 +52,14 @@ export const api = {
     }),
 
   getStats: () => request('/stats'),
+
+  getComments: (reportId) => request(`/reports/${reportId}/comments`),
+
+  createComment: (reportId, content) =>
+    request(`/reports/${reportId}/comments`, {
+      method: 'POST',
+      body: JSON.stringify({ content }),
+    }),
 };
 
 export const UPLOADS_URL = 'http://localhost:8080';
